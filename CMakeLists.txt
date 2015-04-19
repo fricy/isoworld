@@ -23,24 +23,36 @@ IF(UNIX)
 	# Mac OS X
 		OPTION(ISOWORLD_INTERNAL_DYLIB "Link with prebuilt internal allegro libs and headers." ON)
 		IF(ISOWORLD_INTERNAL_DYLIB)
-			FILE(DOWNLOAD http://cloud.github.com/downloads/danaris/dfhack/allegro-507-osx.tar.bz2
-						  ${CMAKE_CURRENT_SOURCE_DIR}/allegro-507-osx.tar.bz2
-						  EXPECTED_MD5 10e8d3dacb01f3d58a9b7f6e5b428470)
-			execute_process(COMMAND tar xf ${CMAKE_CURRENT_SOURCE_DIR}/allegro-507-osx.tar.bz2
+						FILE(DOWNLOAD http://topazgryphon.org/~tcollett/df/allegro-osx.tar.bz2
+						  ${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx.tar.bz2
+						  EXPECTED_MD5 9f41ef3f3be8094100316ecbda1c607c)
+			execute_process(COMMAND tar xf ${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx.tar.bz2
 							WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 			SET(PROJECT_LIBS
-				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro.5.0.7.dylib
-				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_primitives.5.0.7.dylib
-				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_font.5.0.7.dylib
-				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_image.5.0.7.dylib
-				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_ttf.5.0.7.dylib
+				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro.dylib
+				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_main.dylib
+				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_primitives.dylib
+				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_dialog.dylib
+				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_font.dylib
+				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_image.dylib
+				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_color.dylib
+				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib/liballegro_ttf.dylib
+				${CMAKE_CURRENT_SOURCE_DIR}/agui/lib/libagui.dylib
+ 				${CMAKE_CURRENT_SOURCE_DIR}/agui/lib/libagui_allegro5.dylib
 				${PROJECT_LIBS}
 			)
 			include_directories (
 				${include_directories}
 				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/include
+				${CMAKE_CURRENT_SOURCE_DIR}/agui/include
+			)
+			LINK_DIRECTORIES(
+				${LINK_DIRECTORIES}
+				${CMAKE_CURRENT_SOURCE_DIR}/allegro-osx/lib
+				${CMAKE_CURRENT_SOURCE_DIR}/agui/lib
 			)
 			install(DIRECTORY allegro-osx/lib/
+								agui/lib/
 					DESTINATION "hack/libs"
 					PATTERN "CVS" EXCLUDE
 					PATTERN ".svn" EXCLUDE)
