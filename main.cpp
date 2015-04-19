@@ -455,7 +455,7 @@ int bind_to_range(int number, int range)
     return number;
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
     ALLEGRO_COLOR background, active, inactive, info;
     old_dialog = NULL;
