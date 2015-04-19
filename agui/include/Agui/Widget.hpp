@@ -56,7 +56,7 @@
 
 
 namespace agui {
-	typedef std::vector<Widget*> WidgetArray;
+	typedef std::list<Widget*> WidgetArray;
 	class AGUI_CORE_DECLSPEC Gui;
 
 	 /**
@@ -109,6 +109,8 @@ namespace agui {
 		bool handlesChildLogic;
 		bool prevTabable;
 		bool layoutWidget;
+		float globalOpacity;
+        bool causesLocationChange;
 
 
 		std::vector<MouseListener*> mouseListeners;
@@ -335,8 +337,7 @@ namespace agui {
 	*Called by the Gui to paint all the widgets.
 	* @since 0.1.0
 	*/
-		void _recursivePaintChildren(Widget *root, bool enabled,
-			Graphics *graphicsContext);
+		void _recursivePaintChildren(Widget *root, bool enabled, float globalOpacity, Graphics *graphicsContext);
 	/**
 	* If it is flagged, the Gui it belongs to will delete it in the next logic loop
 	* unless it was not part of a Gui when it was flagged or a flag in the Gui
@@ -1193,14 +1194,67 @@ namespace agui {
 	*/
 		bool setCursor(CursorProvider::CursorEnum cursor);
 
+    /** Implementation differs per widget. Will resize the Widget to fit its contents.
+	* ex: Button will resize to fit its text.
+	* @since 0.2.0
+	*/
     virtual void resizeToContents();
+	    /** Implementation differs per widget. Will resize the Widget to fit its contents recursively.
+	* ex: Button will resize to fit its text.
+	* @since 0.2.0
+	*/
     virtual void resizeToContentsRecursive();
+	    /** Implementation differs per widget. Will resize the Widget to fit its contents recursively.
+	* ex: Button will resize to fit its text.
+	* @since 0.2.0
+	*/
     virtual void resizeToContentsRecursiveUp();
+    /** Clears focus recursively.
+	* @since 0.2.0
+	*/
     void checkLostFocusRecursive();
-    /** By clearing parent widget, all of my children will lose top.
-     * If the top focus manager poitns to them, they would have no chance to unfocus when they are destroyed,
-     * that would result in the focus manager pointing to deleted widget. */
+    /** By clearing parent widget, all children will lose top.
+     * If the top focus manager points to them, they would have no chance to unfocus when they are destroyed,
+     * that would result in the focus manager pointing to deleted widget. 
+	* @since 0.2.0
+	*/
     void clearParentWidget();
+    
+    /** @return True if the Widget is a TextField or TextBox subclass.
+    * @since 0.2.0
+    */
+    virtual bool isTextComponent() const;
+    
+    /** @return True if the Widget is a TextField subclass.
+    * @since 0.2.0
+    */
+    virtual bool isTextField() const;
+    
+    /** @return True if the Widget is a TextBox subclass.
+    * @since 0.2.0
+    */
+    virtual bool isTextBox() const;
+        
+    /** Sets whether this Widget causes a location change when draged or pressed.
+    * @since 0.2.0
+    */
+    virtual void setCausesLocationChange(bool causes);
+        
+    /** @return True if this Widget causes a location change when draged or pressed.
+    * @since 0.2.0
+    */
+    virtual bool isCausingLocationChange() const;
+    
+    /** @return True if the Widget accepts input from the keyboard.
+    * @since 0.2.0
+    */
+    virtual bool canAcceptKeyInput() const;
+
+	virtual void _bringToFront();
+	virtual void _sendToBack();
+
+	virtual void setGlobalOpacity(float o);
+	virtual float getGlobalOpacity() const;
 	};
 }
 

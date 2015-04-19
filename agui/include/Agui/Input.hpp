@@ -73,6 +73,9 @@ namespace agui
 		std::queue<KeyboardInput> keyboardEvents;
 		bool mouseEnabled;
 		bool keyboardEnabled;
+        bool touchCompatibility;
+        bool wheelOnDrag;
+        bool wantIneria;
 	protected:
 	/**
 	 * Default constructor.
@@ -129,6 +132,33 @@ namespace agui
 	 * @return True if keyboard input is enabled for the Gui.
      */
 		bool isKeyboardEnabled() const;
+   /**
+   * Set whether or not mouse events will be injected for touch compatibility.
+   */
+   void setTouchCompatibility(bool enabled);
+   /**
+   * @return True if mouse events will be injected for touch compatibility.
+   */
+    bool isUsingTouchCompatibility() const;
+        
+    /**
+    * Set whether or not a mouse wheel event will be sent on drag.
+    */
+    void setMouseWheelOnDrag(bool enabled);
+    /**
+    * @return True if a mouse wheel event will be sent on drag.
+    */
+    bool wantMouseWheelOnDrag() const;
+        
+    /**
+    * Set whether or not touch inertia will be simulated as mousewheel events.
+    */
+    void setInertiaScrolling(bool enabled);
+    /**
+    * @return True if inertia scrolling will be simulated as mousewheel events.
+    */
+    bool wantInertiaScrolling() const;
+            
 	/**
 	 * Default destructor.
      */

@@ -73,6 +73,7 @@ namespace agui {
 		bool mouseInside;
 		std::vector<SelectionListener*> selectionListeners;
 		std::vector<DropDownListener*> dropDownListeners;
+		std::string noSelectionText;
     static int dropDownArrowWidth;
 	protected:
 	/**
@@ -167,11 +168,24 @@ namespace agui {
      * Removes an item from the internal ListBox.
      * @since 0.1.0
      */
-		virtual void removeItem(const std::string& item);
+	virtual void removeItem(const std::string& item);
 	/**
      * Removes an item from the internal ListBox at the specified index.
      * @since 0.1.0
      */
+
+	virtual void clearItems();
+	/**
+     * Removes all items from the internal ListBox.
+     * @since 0.2.0
+     */
+
+	virtual int getItemCount() const;
+	/**
+     * @return Number of items in DropDown.
+     * @since 0.2.0
+     */
+
 		virtual void removeItemAt(int index);
 	/**
      * @return True if the internal ListBox is visible.
@@ -203,6 +217,7 @@ namespace agui {
      */
 		virtual int getSelectedIndex() const;
 		virtual void mouseDown(MouseEvent &mouseEvent);
+        virtual void mouseClick(MouseEvent &mouseEvent);
 		virtual void mouseClickCB(MouseEvent &mouseEvent);
 		virtual void setSize(const Dimension &size);
 		virtual void setSize(int width, int height);
@@ -224,6 +239,16 @@ namespace agui {
      * Sets the offset for the position of the ListBox when it is shown.
      * @since 0.1.0
      */void setListPositionOffset(const Point& offset);
+	/**
+     * @return The text that will be presented when no item is selected.
+     * @since 0.2.1
+     */
+		const std::string& getNoSelectionText() const;
+
+				/**
+     * Sets the text that will be presented when no item is selected.
+     * @since 0.2.1
+	 */void setNoSelectionText(const std::string& text);
 	/**
      * @return The offset for the position of the ListBox when it is shown.
      * @since 0.1.0

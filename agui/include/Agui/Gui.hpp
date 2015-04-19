@@ -45,6 +45,7 @@
 #include "Agui/Widget.hpp"
 #include "Agui/EventArgs.hpp"
 #include <stack>
+#include <queue>
 #include "Agui/Input.hpp"
 #include "Agui/BaseTypes.hpp"
 #include "Agui/FocusManager.hpp"
@@ -52,6 +53,7 @@
 #include "Agui/MouseListener.hpp"
 #include "Agui/CursorProvider.hpp"
 #include "Agui/Transform.hpp"
+#include "Agui/TapListener.hpp"
 namespace agui
 {
 	class AGUI_CORE_DECLSPEC TopContainer;
@@ -87,6 +89,7 @@ namespace agui
 		double currentTime;
 		std::vector<KeyboardListener*> keyPreviewListeners;
 		std::vector<MouseListener*> mousePreviewListeners;
+        std::vector<TapListener*> tapListeners;
 		Input* input;
 		Graphics* graphicsContext;
 		std::stack<Widget*> flaggedWidgets;
@@ -119,6 +122,7 @@ namespace agui
 		bool passedFocus; 
 
 		bool tabbingEnabled;
+        bool focusEnabled;
 
 		//modal variable
 
@@ -149,6 +153,21 @@ namespace agui
 		Transform transform;
 
 		bool delayMouseDown;
+        
+        Point lastDragPos;
+        Point startDragPos;
+        double downTime;
+        double touchInertia;
+        double lastInertiaTime;
+        Widget* inertiaReceiver;
+
+		std::queue<Widget*> frontWidgets;
+		std::queue<Widget*> backWidgets;
+        
+    
+        void haltInertia();
+        void processInertia();
+        void beginInertia(Widget* target, float speed);
 
 	/**
      * Converts the mouse event's position into one that is relative to the parameter widget.
@@ -209,7 +228,7 @@ namespace agui
      */
 		void handleTimedEvents();
 
-		/**
+	/**
      * Handles the ToolTip hide logic.
      * @since 0.2.0
      */
@@ -492,7 +511,18 @@ namespace agui
 	 * Removes a mouse preview listener. If a mouse preview listener handles the event, the intended widget will not receive it.
      * @since 0.2.0
      */
-		void removeMousePreviewListener( MouseListener* listener );
+       void removeMousePreviewListener( MouseListener* listener );
+    /**
+    * Adds a tap listener.
+    * @since 0.2.1
+    */
+       void addTapListener(TapListener* listener);
+    /**
+    * Removes a tap listener.
+    * @since 0.2.1
+    */
+       void removeTapListener( TapListener* listener );
+        
 	/**
 	 * @return The amount of time in seconds the application has been running.
 	 *
@@ -639,6 +669,18 @@ namespace agui
      * @since 0.2.0
      */
 		bool isUsingTransform() const;
+        
+   /**
+   * @Set whether or not to use a transformation on the mouse coordinates.
+   * @since 0.2.0
+   */
+   void setFocusEnabled(bool enabled);
+        
+   /**
+   * @Return true if focus events are enabled.
+   * @since 0.2.0
+   */
+    bool isFocusEnabled() const;
 
 					/**
 	 * @Set whether or not the mouse down events are delayed by 1 logic() update.
@@ -678,12 +720,46 @@ namespace agui
 		Widget* getLockWidget();
 
 			/**
+     * Allows you to manually null the Widget under the mouse.
+     * @since 0.2.1
+     */
+		void setWidgetUnderMouseToNull();
+
+	/**
+     * @return True if widget location changes are tracked accurately.
+     * @since 0.2.1
+     */
+		bool isWidgetLocationChangesEnabled() const;
+
+	/**
+     * @return The Input set for this Gui.
+     * @since 0.2.1
+     */
+		Input* getInput();
+
+	/**
+     * @return The Graphics set for this Gui.
+     * @since 0.2.1
+     */
+		Graphics* getGraphics();
+
+	/**
+     * Teleport the mouse position of this Gui. Forces a logic call.
+     * @since 0.2.1
+     */
+		void teleportMouse(int x, int y);
+
+			/**
 	 * Sets whether or not the expensive call to check if the widget
 	 * under the mouse changed when widgets resize, move etc is called.
      * @since 0.2.0
      */
 
 		void toggleWidgetLocationChanged(bool on);
+
+
+		void bringWidgetToFront(Widget* w);
+		void sendWidgetToBack(Widget* w);
 	/**
 	 * Default destructor.
      * @since 0.1.0
